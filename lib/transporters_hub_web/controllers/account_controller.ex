@@ -1,8 +1,10 @@
 defmodule TransportersHubWeb.AccountController do
   use TransportersHubWeb, :controller
 
-  alias TransportersHub.Accounts
-  alias TransportersHub.Accounts.Account
+  alias TransportersHubWeb.Auth.Guardian
+  alias TransportersHub.{Accounts, Accounts.Account, Users, Users.User}
+  alias TransportersHubWeb.AccountJSON
+
 
   action_fallback TransportersHubWeb.FallbackController
 
@@ -12,11 +14,12 @@ defmodule TransportersHubWeb.AccountController do
   end
 
   def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- Accounts.create_account(account_params) do
+    with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
+    {:ok, token, _claims} <- Guardian.encode_and_sign(account),
+    {:ok, %User{} = _user } <- Users.create_user(account, account_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/accounts/#{account}")
-      |> render(:show, account: account)
+      |> render("account_token.json", account: account, token: token)
     end
   end
 
