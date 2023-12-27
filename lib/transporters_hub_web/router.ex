@@ -8,6 +8,7 @@ defmodule TransportersHubWeb.Router do
   scope "/api", TransportersHubWeb do
     pipe_through :api
     get "/", DefaultController, :index
+    post "accounts/create", AccountController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
