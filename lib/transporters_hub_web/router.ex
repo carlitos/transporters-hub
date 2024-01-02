@@ -3,7 +3,6 @@ defmodule TransportersHubWeb.Router do
   use Plug.ErrorHandler
 
   def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
-    require IEx; IEx.pry
     conn |> json(%{errors: message}) |> halt()
   end
 
