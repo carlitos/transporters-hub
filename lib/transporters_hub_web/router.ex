@@ -14,11 +14,20 @@ defmodule TransportersHubWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug TransportersHubWeb.Auth.Pipeline
+  end
+
   scope "/api", TransportersHubWeb do
     pipe_through :api
     get "/", DefaultController, :index
     post "/accounts/create", AccountController, :create
     post "/accounts/sign_in", AccountController, :sign_in
+  end
+
+  scope "/api", TransportersHubWeb do
+    pipe_through [:api, :auth]
+    get "/accounts/by_id/:id", AccountController, :show
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
