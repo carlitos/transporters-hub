@@ -49,7 +49,9 @@ defmodule TransportersHub.Accounts do
         nil
   """
   def get_account_by_email(email) do
-    Repo.get_by(Account, email: email)
+    Account
+    |> where(email: ^email)
+    |> Repo.one()
   end
 
   @doc """
