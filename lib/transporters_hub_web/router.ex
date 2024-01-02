@@ -1,5 +1,15 @@
 defmodule TransportersHubWeb.Router do
   use TransportersHubWeb, :router
+  use Plug.ErrorHandler
+
+  def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
+    require IEx; IEx.pry
+    conn |> json(%{errors: message}) |> halt()
+  end
+
+  def handle_errors(conn, %{reason: %{message: message}}) do
+    conn |> json(%{errors: message}) |> halt()
+  end
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -8,7 +18,8 @@ defmodule TransportersHubWeb.Router do
   scope "/api", TransportersHubWeb do
     pipe_through :api
     get "/", DefaultController, :index
-    post "accounts/create", AccountController, :create
+    post "/accounts/create", AccountController, :create
+    post "/accounts/sign_in", AccountController, :sign_in
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
